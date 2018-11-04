@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Smashalyze</title>
+    <script src='node_modules/lodash/lodash.min.js'></script>
+    <script src='lib/opencv.js'></script>
+    <script src='node_modules/tesseract.js/dist/tesseract.js'></script>
+    <script type="text/javascript" src="export.js"></script>
+</head>
+<body>
+<h1>Current state: <span id="state"></span></h1>
+<div class="state-container" data-state="match"></div>
+<div class="state-container" data-state="score"></div>
+<div class="state-container" data-state="character_select"></div>
+    <video id="video" width="800" height="530" controls>
+        <source src="assets/smash.mp4" type="video/mp4">
+    </video>
+<br/>
+    <script type="text/javascript" src="transforms.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
+    <script type="text/javascript" src="states/Base.js"></script>
+    <script type="text/javascript" src="states/Match.js"></script>
+    <script type="text/javascript" src="dataMatcher.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+</body>
+</html>

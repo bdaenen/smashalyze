@@ -1,0 +1,70 @@
+<script src='../lib/opencv.js'></script>
+<img src="../screenshots/fight.png" id="in"/>
+<canvas id="out1"></canvas>
+<canvas id="out2"></canvas>
+<br/>
+FROM
+<label for="R">R</label>
+<input type="range" min="0" max="255" id="R">
+<label for="G">G</label>
+<input type="range" min="0" max="255" id="G">
+<label for="B">B</label>
+<input type="range" min="0" max="255" id="B">
+<label for="A">A</label>
+<input type="range" min="0" max="255" id="A">
+<br/>
+TILL
+<label for="RT">R</label>
+<input type="range" min="0" max="255" id="RT">
+<label for="GT">G</label>
+<input type="range" min="0" max="255" id="GT">
+<label for="BT">B</label>
+<input type="range" min="0" max="255" id="BT">
+<label for="AT">A</label>
+<input type="range" min="0" max="255" id="AT">
+<script type="text/javascript">
+    document.getElementById('in').onload = function(e){
+      document.getElementById('out1').width = e.target.width;
+      document.getElementById('out2').width = e.target.width;
+      document.getElementById('out1').height = e.target.height;
+      document.getElementById('out2').height = e.target.height;
+    };
+    var colors = {
+        R : [0, 0],
+        G : [0, 0],
+        B : [0, 0],
+        A : [0, 0]
+    };
+    document.querySelectorAll('input').forEach(function(el){
+      el.addEventListener('change', function(e){
+        var c = colors[e.target.id.substr(0, 1)];
+        var index = e.target.id.length > 1 ? 1 : 0;
+        c[index] = parseInt(e.target.value, 10);
+        updateFilter();
+      });
+    });
+//0, 0, 0, 255
+//26, 28, 38, 255
+    function updateFilter() {
+      var src = cv.imread('in');
+      var dst1 = new cv.Mat(src.rows, src.cols, src.type());
+
+      var colorLower = new cv.Mat(src.rows, src.cols, src.type(), [colors.R[0], colors.G[0], colors.B[0], colors.A[0]]);
+      var colorHigher = new cv.Mat(src.rows, src.cols, src.type(), [colors.R[1], colors.G[1], colors.B[1], colors.A[1]]);
+
+// You can try more different parameters
+      cv.inRange(src, colorLower, colorHigher, dst1);
+// You can try more different parameters
+      // cv.cvtColor(src, src, cv.COLOR_RGB2GRAY, 0);
+      // cv.threshold(src, src, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU);
+      //cv.Canny(src, src, 50, 100, 3, false);
+      //cv.bitwise_not(src, src);
+      //cv.erode(src, src, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+      //cv.dilate(src, src, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+
+
+// You can try more different parameters
+      cv.imshow('out1', dst1);
+      src.delete(); colorLower.delete(); colorHigher.delete(); dst1.delete();
+    }
+</script>

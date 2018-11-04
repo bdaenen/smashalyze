@@ -1,0 +1,46 @@
+<script src='../lib/opencv.js'></script>
+<img src="../screenshots/fight.png" id="in"/>
+<canvas id="out1"></canvas>
+<script type="text/javascript">
+    document.getElementById('in').onload = function(e){
+      document.getElementById('out1').width = e.target.width;
+      document.getElementById('out1').height = e.target.height;
+      updateFilter();
+    };
+
+//0, 0, 0, 255
+//26, 28, 38, 255
+    function updateFilter() {
+      var src = cv.imread('in');
+      var dst1 = new cv.Mat(src.rows, src.cols, src.type());
+      cv.cvtColor(src, src, cv.COLOR_RGBA2RGB, 0);
+
+      let mask = new cv.Mat();
+      let bgdModel = new cv.Mat();
+      let fgdModel = new cv.Mat();
+      let rect = new cv.Rect(263, 580, 210, 120);
+      console.time('w');
+      cv.grabCut(src, mask, rect, bgdModel, fgdModel, 1, cv.GC_INIT_WITH_RECT);
+      console.timeEnd('w');
+      console.time('d');
+// draw foreground
+      for (let i = 0; i < src.rows; i++) {
+        for (let j = 0; j < src.cols; j++) {
+          if (mask.ucharPtr(i, j)[0] == 0 || mask.ucharPtr(i, j)[0] == 2) {
+            src.ucharPtr(i, j)[0] = 0;
+            src.ucharPtr(i, j)[1] = 0;
+            src.ucharPtr(i, j)[2] = 0;
+          }
+        }
+      }
+      console.timeEnd('d');
+// draw grab rect
+      let color = new cv.Scalar(0, 0, 255);
+      let point1 = new cv.Point(rect.x, rect.y);
+      let point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
+      cv.rectangle(src, point1, point2, color);
+      cv.imshow('out1', src);
+      src.delete(); mask.delete(); bgdModel.delete(); fgdModel.delete();
+
+    }
+</script>
